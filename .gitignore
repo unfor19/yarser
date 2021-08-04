@@ -1,0 +1,10 @@
+# Generic
+.*
+!.*ignore*
+!.github/
+
+# Artifacts
+temper
+*.tar.gz
+*.tgz
+*.zip
