@@ -1,0 +1,82 @@
+name: testing
+on:
+  push:
+jobs:
+  component-test-sanity1:
+    name: Component Test Sanity
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache Python VENV
+        id: cache-python-packages
+        uses: actions/cache@v2
+        with:
+          path: ./VENV
+          key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements.txt') }}-v2
+          restore-keys: |
+            ${{ runner.os }}-venv-
+      - name: Install Python Packages In VENV
+        if: steps.cache-python-packages.outputs.cache-hit != 'true'
+        run: |
+          python -m venv ./VENV && . ./VENV/bin/activate
+          pip install -r requirements.txt
+      - name: Component Test
+        run: |
+          . ./VENV/bin/activate
+          mkdir -p test_reports/${TEST_TYPE}
+          echo "Started running ${TEST_TYPE} tests ..."
+          pytest -vs -m '${PYTEST_MARKERS}' --capture=sys --show-progress --html=test_reports/${TEST_TYPE}/test-report-${TEST_TYPE}.html --self-contained-html ci/component_test
+          echo "Finished running ${TEST_TYPE} tests"
+        env:
+          TEST_TYPE: sanity
+          PYTEST_MARKERS: sanity_include and not sanity_exclude
+      - name: Upload Test Results As Artifact
+        uses: actions/upload-artifact@v2
+        if: always()
+        ### Override
+        # env:
+        #   TEST_TYPE: ""
+        with:
+          name: test-report-${{ env.TEST_TYPE }}
+          path: test_reports/${{ env.TEST_TYPE }}/test-report-${{ env.TEST_TYPE }}.html
+        env:
+          TEST_TYPE: sanity
+  component-test-regression:
+    runs-on: ubuntu-20.04
+    name: Component Test Regression
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache Python VENV
+        id: cache-python-packages
+        uses: actions/cache@v2
+        with:
+          path: ./VENV
+          key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements.txt') }}-v2
+          restore-keys: |
+            ${{ runner.os }}-venv-
+      - name: Install Python Packages In VENV
+        if: steps.cache-python-packages.outputs.cache-hit != 'true'
+        run: |
+          python -m venv ./VENV && . ./VENV/bin/activate
+          pip install -r requirements.txt
+      - name: Component Test
+        run: |
+          . ./VENV/bin/activate
+          mkdir -p test_reports/${TEST_TYPE}
+          echo "Started running ${TEST_TYPE} tests ..."
+          pytest -vs -m '${PYTEST_MARKERS}' --capture=sys --show-progress --html=test_reports/${TEST_TYPE}/test-report-${TEST_TYPE}.html --self-contained-html ci/component_test
+          echo "Finished running ${TEST_TYPE} tests"
+        env:
+          TEST_TYPE: regression
+          PYTEST_MARKERS: sanity_exclude
+      - name: Upload Test Results As Artifact
+        uses: actions/upload-artifact@v2
+        if: always()
+        ### Override
+        # env:
+        #   TEST_TYPE: ""
+        with:
+          name: test-report-${{ env.TEST_TYPE }}
+          path: test_reports/${{ env.TEST_TYPE }}/test-report-${{ env.TEST_TYPE }}.html
+        env:
+          TEST_TYPE: regression

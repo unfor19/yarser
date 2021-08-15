@@ -1,0 +1,80 @@
+name: testing
+
+on:
+  push:
+
+.global:
+  runs-on-ubuntu: &runs-on-ubuntu ubuntu-20.04
+  steps:
+    - &git-checkout
+      uses: actions/checkout@v2
+    - &cache-venv
+      name: Cache Python VENV
+      id: cache-python-packages
+      uses: actions/cache@v2
+      with:
+        path: ./VENV
+        key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements.txt') }}-v2
+        restore-keys: |
+          ${{ runner.os }}-venv-
+    - &install-python-packages-venv
+      name: Install Python Packages In VENV
+      if: steps.cache-python-packages.outputs.cache-hit != 'true'
+      run: |
+        python -m venv ./VENV && . ./VENV/bin/activate
+        pip install -r requirements.txt
+    - &component-test
+      name: Component Test
+      env:
+        TEST_URL: http://localhost:80
+        NODE_ENV: local
+        ### Override
+        # TEST_TYPE: ""
+        # PYTEST_MARKERS: ""
+      run: |
+        . ./VENV/bin/activate
+        mkdir -p test_reports/${TEST_TYPE}
+        echo "Started running ${TEST_TYPE} tests ..."
+        pytest -vs -m '${PYTEST_MARKERS}' --capture=sys --show-progress --html=test_reports/${TEST_TYPE}/test-report-${TEST_TYPE}.html --self-contained-html ci/component_test
+        echo "Finished running ${TEST_TYPE} tests"
+    - &upload--testresults-artifact
+      name: Upload Test Results As Artifact
+      uses: actions/upload-artifact@v2
+      if: always()
+      ### Override
+      # env:
+      #   TEST_TYPE: ""
+      with:
+        name: test-report-${{ env.TEST_TYPE }}
+        path: test_reports/${{ env.TEST_TYPE }}/test-report-${{ env.TEST_TYPE }}.html
+jobs:
+  component-test-sanity1:
+    name: Component Test Sanity
+    runs-on: *runs-on-ubuntu
+    steps:
+      - *git-checkout
+      - *cache-venv
+      - *install-python-packages-venv
+      - <<: *component-test
+        env:
+          TEST_TYPE: sanity
+          PYTEST_MARKERS: sanity_include and not sanity_exclude
+
+      - <<: *upload--testresults-artifact
+        env:
+          TEST_TYPE: sanity
+
+  component-test-regression:
+    runs-on: *runs-on-ubuntu
+    name: Component Test Regression
+    steps:
+      - *git-checkout
+      - *cache-venv
+      - *install-python-packages-venv
+      - <<: *component-test
+        env:
+          TEST_TYPE: regression
+          PYTEST_MARKERS: sanity_exclude
+      - <<: *upload--testresults-artifact
+        env:
+          TEST_TYPE: regression
