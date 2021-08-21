@@ -46,13 +46,11 @@ jobs:
   #       uses: unfor19/release-action/golang/1.16@master
   #       with:
   #         action: dependencies
-  #         src-dir: golang
   #         project-name: ${{ env.PROJECT_NAME }}
   #     - name: Go Test
   #       uses: unfor19/release-action/golang/1.16@master
   #       with:
   #         action: test
-  #         src-dir: golang
   #         project-name: ${{ env.PROJECT_NAME }}
   #     - name: Upload Test Results As Artifact
   #       uses: actions/upload-artifact@v2
@@ -106,18 +104,15 @@ jobs:
         uses: unfor19/release-action/golang/1.16@master
         with:
           action: dependencies
-          src-dir: golang
           project-name: ${{ env.PROJECT_NAME }}
       - name: Go Build
         uses: unfor19/release-action/golang/1.16@master
         with:
           action: build
-          src-dir: golang
           project-name: ${{ env.PROJECT_NAME }}
       - name: Release
         uses: unfor19/release-action/golang/1.16@master
         with:
           action: release
-          src-dir: golang
           project-name: ${{ env.PROJECT_NAME }}
           gh-token: ${{ secrets.GH_TOKEN }}
