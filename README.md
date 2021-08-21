@@ -20,15 +20,14 @@ A CLI for parsing YAML anchors to plain YAML files.
     ```
    - Linux
     ```bash
-    YARSER_OS="linux" && \
-    YARSER_VERSION="0.0.1rc2" && \
+    export YARSER_OS="linux" YARSER_VERSION="0.0.1rc2" && \
     wget -O yarser "https://github.com/unfor19/yarser/releases/download/${YARSER_VERSION}/${YARSER_VERSION}_${YARSER_OS}_amd64"
     ```
    - Windows - Download the executeable [yarser_0.0.1rc2_windows_amd64.exe](https://github.com/unfor19/yarser/releases/download/0.0.1rc2/yarser_0.0.1rc2_windows_amd64.exe)
 2. Move `yarser` binary to `bin` dir and set permissions to allow execution
-   ```
-   sudo mv yarser /usr/local/bin/yarser && \
-   sudo chmod +x /usr/local/bin/yarser
+   ```bash
+   sudo mv yarser "/usr/local/bin/yarser" && \
+   sudo chmod +x "/usr/local/bin/yarser"
    ```
    **NOTE**: No need on windows
 3. Parse a YAML file once
