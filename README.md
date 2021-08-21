@@ -15,26 +15,33 @@ In my tests, I use [tests/github-action/my-action.yml](https://github.com/unfor1
 
 ## Getting Started
 
-1. Download the binary file from the releases page, for example [0.0.1rc2](https://github.com/unfor19/yarser/releases/tag/0.0.1rc2)
-   - macOS
+1. Download the binary file from the releases page, for example [0.0.1rc3](https://github.com/unfor19/yarser/releases/tag/0.0.1rc3)
+   - macOS - Intel chips
     ```bash
     YARSER_OS="darwin" && \
     YARSER_ARCH="amd64" && \
-    YARSER_VERSION="0.0.1rc2" && \
+    YARSER_VERSION="0.0.1rc3" && \
     wget -O yarser "https://github.com/unfor19/yarser/releases/download/${YARSER_VERSION}/yarser_${YARSER_VERSION}_${YARSER_OS}_${YARSER_ARCH}"
     ```
-   - Linux
+   - macOS - M1 chips
+    ```bash
+    YARSER_OS="darwin" && \
+    YARSER_ARCH="arm64" && \
+    YARSER_VERSION="0.0.1rc3" && \
+    wget -O yarser "https://github.com/unfor19/yarser/releases/download/${YARSER_VERSION}/yarser_${YARSER_VERSION}_${YARSER_OS}_${YARSER_ARCH}"
+    ```    
+   - Linux - amd64
     ```bash
     YARSER_OS="linux" && \
     YARSER_ARCH="amd64" && \
-    YARSER_VERSION="0.0.1rc2" && \
+    YARSER_VERSION="0.0.1rc3" && \
     wget -O yarser "https://github.com/unfor19/yarser/releases/download/${YARSER_VERSION}/yarser_${YARSER_VERSION}_${YARSER_OS}_${YARSER_ARCH}"
     ```
-   - Windows WSL2
+   - [Windows WSL2](https://docs.microsoft.com/en-us/windows/wsl/install-win10) - 386
     ```bash
     YARSER_OS="linux" && \
     YARSER_ARCH="386" && \    
-    YARSER_VERSION="0.0.1rc2" && \
+    YARSER_VERSION="0.0.1rc3" && \
     wget -O yarser "https://github.com/unfor19/yarser/releases/download/${YARSER_VERSION}/yarser_${YARSER_VERSION}_${YARSER_OS}_${YARSER_ARCH}"   
     ```
 2. Set permissions to allow execution of `yarser` binary and move to `/usr/local/bin` dir 
