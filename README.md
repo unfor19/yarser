@@ -4,6 +4,8 @@
 
 A CLI for parsing YAML anchors to plain YAML files.
 
+![yarser-demo](https://assets.meirg.co.il/yarser/yarser-demo.gif)
+
 ## Features
 
 - Parses YAML anchors
