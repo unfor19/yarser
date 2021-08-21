@@ -31,9 +31,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Global variables
-var CounterWriteEvents = 0
-
 // watchCmd represents the watch command
 var watchCmd = &cobra.Command{
 	Use:   "watch",
@@ -86,16 +83,10 @@ func CustomWatcher(watchFilePath string, dstFilePath string, fn callback) {
 				}
 				if event.Op&fsnotify.Write == fsnotify.Write {
 					// Write events are doubled, no idea why, so once an event occurs we want to stop the following one
-					if CounterWriteEvents == 0 {
-						if err := fn(watchFilePath, dstFilePath); err != nil {
-							logger.Error("Error invoking callback", watchFilePath, dstFilePath)
-							log.Fatalln(err)
-						}
-						CounterWriteEvents += 1
-					} else {
-						CounterWriteEvents = 0
+					if err := fn(watchFilePath, dstFilePath); err != nil {
+						logger.Error("Error invoking callback", watchFilePath, dstFilePath)
+						log.Fatalln(err)
 					}
-
 				}
 			case err, ok := <-watcher.Errors:
 				if !ok {
