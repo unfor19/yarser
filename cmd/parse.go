@@ -80,10 +80,10 @@ func parseYaml(srcFilePath string, dstFilePath string) error {
 	if delResult == "" {
 		logger.Debug("Deleted all nodes that start with '.'")
 	} else {
-		logger.Debug("Deletion result:", delResult)
+		logger.Debug("Deletion result: ", delResult)
 	}
 
-	logger.Info("Successfully parsed", srcFilePath, "to", dstFilePath)
+	logger.Info("Successfully parsed ", srcFilePath, " to ", dstFilePath)
 
 	return nil
 }
