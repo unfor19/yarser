@@ -1,0 +1,123 @@
+name: Release-Test
+
+on:
+  push:
+    branches:
+      - master # creates a pre-release
+  release:
+    types:
+      - released # does not include pre-release
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to set as prerelease"
+        required: false
+        default: "master"
+
+env:
+  PROJECT_NAME: "yarser"
+
+jobs:
+  # test:
+  #   name: Test
+  #   runs-on: ubuntu-20.04
+  #   steps:
+  #     - uses: actions/checkout@master
+  #     - name: Cache Go Build
+  #       id: cache-go-build
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: |
+  #           .cache-go-build
+  #         key: ${{ runner.os }}-go-build-test-${{ hashFiles('**/go.sum') }}-${{ env.PROJECT_NAME }}-v2
+  #         restore-keys: |
+  #           ${{ runner.os }}-go-build-test-${{ hashFiles('**/go.sum') }}-${{ env.PROJECT_NAME }}-v2
+  #     - name: Cache Go Modules
+  #       id: cache-go-modules
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: |
+  #           .cache-modules
+  #         key: ${{ runner.os }}-go-modules-test-${{ hashFiles('**/go.sum') }}-${{ env.PROJECT_NAME }}-v2
+  #         restore-keys: |
+  #           ${{ runner.os }}-go-modules-test-${{ hashFiles('**/go.sum') }}-${{ env.PROJECT_NAME }}-v2
+  #     - name: Get Dependencies
+  #       if: steps.cache-go-modules.outputs.cache-hit != 'true'
+  #       uses: unfor19/release-action/golang/1.16@master
+  #       with:
+  #         action: dependencies
+  #         src-dir: golang
+  #         project-name: ${{ env.PROJECT_NAME }}
+  #     - name: Go Test
+  #       uses: unfor19/release-action/golang/1.16@master
+  #       with:
+  #         action: test
+  #         src-dir: golang
+  #         project-name: ${{ env.PROJECT_NAME }}
+  #     - name: Upload Test Results As Artifact
+  #       uses: actions/upload-artifact@v2
+  #       if: always()
+  #       with:
+  #         name: test_report
+  #         path: test_report.html
+  release:
+    name: Release
+    runs-on: ubuntu-20.04
+    # needs:
+    #   - test
+    strategy:
+      matrix:
+        include:
+          - GOARCH: "amd64"
+            GOOS: "linux"
+          - GOARCH: "386"
+            GOOS: "linux"
+          - GOARCH: "arm64"
+            GOOS: "linux"
+          - GOARCH: "amd64"
+            GOOS: "darwin"
+          - GOARCH: "amd64"
+            GOOS: "windows"
+    env:
+      GOOS: ${{ matrix.GOOS }}
+      GOARCH: ${{ matrix.GOARCH }}
+    steps:
+      - uses: actions/checkout@master
+      - name: Cache Go Build
+        id: cache-go-build
+        uses: actions/cache@v2
+        with:
+          path: |
+            .cache-go-build
+          key: ${{ runner.os }}-go-build-${{ matrix.GOOS }}-${{ matrix.GOARCH }}-${{ hashFiles('**/go.sum') }}-${{ env.PROJECT_NAME }}-v2
+          restore-keys: |
+            ${{ runner.os }}-go-build-${{ matrix.GOOS }}-${{ matrix.GOARCH }}-${{ hashFiles('**/go.sum') }}-${{ env.PROJECT_NAME }}-v2
+      - name: Cache Go Modules
+        id: cache-go-modules
+        uses: actions/cache@v2
+        with:
+          path: |
+            .cache-modules
+          key: ${{ runner.os }}-go-modules-${{ matrix.GOOS }}-${{ matrix.GOARCH }}-${{ hashFiles('**/go.sum') }}-${{ env.PROJECT_NAME }}-v2
+          restore-keys: |
+            ${{ runner.os }}-go-modules-${{ matrix.GOOS }}-${{ matrix.GOARCH }}-${{ hashFiles('**/go.sum') }}-${{ env.PROJECT_NAME }}-v2
+      - name: Get Dependencies
+        if: steps.cache-go-modules.outputs.cache-hit != 'true'
+        uses: unfor19/release-action/golang/1.16@master
+        with:
+          action: dependencies
+          src-dir: golang
+          project-name: ${{ env.PROJECT_NAME }}
+      - name: Go Build
+        uses: unfor19/release-action/golang/1.16@master
+        with:
+          action: build
+          src-dir: golang
+          project-name: ${{ env.PROJECT_NAME }}
+      - name: Release
+        uses: unfor19/release-action/golang/1.16@master
+        with:
+          action: release
+          src-dir: golang
+          project-name: ${{ env.PROJECT_NAME }}
+          gh-token: ${{ secrets.GH_TOKEN }}
