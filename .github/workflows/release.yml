@@ -1,9 +1,11 @@
-name: Release-Test
+name: Release
 
 on:
   push:
     branches:
       - master # creates a pre-release
+    paths-ignore:
+      - README.md
   release:
     types:
       - released # does not include pre-release
