@@ -35,7 +35,7 @@ In my tests, I use [tests/github-action/my-action.yml](https://github.com/unfor1
     YARSER_VERSION="0.0.1rc2" && \
     wget -O yarser "https://github.com/unfor19/yarser/releases/download/${YARSER_VERSION}/yarser_${YARSER_VERSION}_${YARSER_OS}_${YARSER_ARCH}"   
     ```
-2. set permissions to allow execution of `yarser` binary and move to `/usr/local/bin` dir 
+2. Set permissions to allow execution of `yarser` binary and move to `/usr/local/bin` dir 
    ```bash
    chmod +x yarser && \
    sudo mv yarser "/usr/local/bin/yarser"
