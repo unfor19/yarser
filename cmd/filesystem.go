@@ -19,10 +19,20 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package main
+package cmd
 
-import "github.com/unfor19/yarser/cmd"
+import (
+	"os"
 
-func main() {
-  cmd.Execute()
+	log "github.com/sirupsen/logrus"
+)
+
+func CreateEmptyFile(filePath string) os.File {
+	file, err := os.Create(filePath)
+	if err != nil {
+		log.Error("Failed to create file")
+		log.Fatalln(err)
+	}
+	file.Chmod(0755)
+	return *file
 }
