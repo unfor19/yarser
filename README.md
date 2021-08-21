@@ -15,26 +15,35 @@ A CLI for parsing YAML anchors to plain YAML files.
    - macOS
     ```bash
     YARSER_OS="darwin" && \
+    YARSER_ARCH="amd64" && \
     YARSER_VERSION="0.0.1rc2" && \
-    wget -O yarser "https://github.com/unfor19/yarser/releases/download/${YARSER_VERSION}/${YARSER_VERSION}_${YARSER_OS}_amd64"
+    wget -O yarser "https://github.com/unfor19/yarser/releases/download/${YARSER_VERSION}/yarser_${YARSER_VERSION}_${YARSER_OS}_${YARSER_ARCH}"
     ```
    - Linux
     ```bash
-    export YARSER_OS="linux" YARSER_VERSION="0.0.1rc2" && \
-    wget -O yarser "https://github.com/unfor19/yarser/releases/download/${YARSER_VERSION}/${YARSER_VERSION}_${YARSER_OS}_amd64"
+    YARSER_OS="linux" && \
+    YARSER_ARCH="amd64" && \
+    YARSER_VERSION="0.0.1rc2" && \
+    wget -O yarser "https://github.com/unfor19/yarser/releases/download/${YARSER_VERSION}/yarser_${YARSER_VERSION}_${YARSER_OS}_${YARSER_ARCH}"
     ```
-   - Windows - Download the executeable [yarser_0.0.1rc2_windows_amd64.exe](https://github.com/unfor19/yarser/releases/download/0.0.1rc2/yarser_0.0.1rc2_windows_amd64.exe)
+   - Windows WSL2
+    ```bash
+    YARSER_OS="linux" && \
+    YARSER_ARCH="386" && \    
+    YARSER_VERSION="0.0.1rc2" && \
+    wget -O yarser "https://github.com/unfor19/yarser/releases/download/${YARSER_VERSION}/yarser_${YARSER_VERSION}_${YARSER_OS}_${YARSER_ARCH}"   
+    ```
 2. Move `yarser` binary to `bin` dir and set permissions to allow execution
    ```bash
-   sudo mv yarser "/usr/local/bin/yarser" && \
-   sudo chmod +x "/usr/local/bin/yarser"
+   chmod +x yarser
+   sudo mv yarser "/usr/local/bin/yarser"
    ```
    **NOTE**: No need on windows
-3. Parse a YAML file once
+3. Parse a YAML file once - here's the YAML file with anchors that I'm testing with [my-action.yml](tests/github-action/my-action.yml)
    ```bash
    SRC_FILE_PATH="tests/github-action/my-action.yml" && \
    DST_FILE_PATH=".my-action-compiled.yml" && \
-   yarser parse --watch "$SRC_FILE_PATH" "$DST_FILE_PATH"   
+   yarser parse --watch "$SRC_FILE_PATH" "$DST_FILE_PATH"
    # INFO[2021-08-21T19:10:25+03:00] Successfully parsed tests/github-action/my-action.yml to .my-action-compiled.yml
    # Check the file .my-action-compiled.yml
    ```
